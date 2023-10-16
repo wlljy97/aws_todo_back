@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.korit.todo.repository.UserMapper">
+    <resultMap  id="userResultMap"  type="com.korit.todo.entity.User">
+        <id     property="userId"   column="user_id" />
+        <result property="email"    column="email" />
+        <result property="password" column="password" />
+        <result property="name"     column="name" />
+        <collection property="authorities" javaType="list" resultMap="authorityResultMap" />
+    </resultMap>
+
+    <resultMap  id="authorityResultMap"     type="com.korit.todo.entity.Authority">
+        <id     property="authorityId"      column="authority_id" />
+        <result property="userId"           column="at_user_id" />
+        <result property="roleId"           column="at_role_id" />
+        <association property="role"        resultMap="roleResultMap" />
+    </resultMap>
+
+    <resultMap  id="roleResultMap"      type="com.korit.todo.entity.Role">
+        <id     property="roleId"       column="role_id" />
+        <result property="roleName"     column="role_name" />
+    </resultMap>
+
+    <select id="findUserByEmail"
+            parameterType="string"
+            resultMap="userResultMap">
+        select
+            ut.user_id,
+            ut.email,
+            ut.password,
+            ut.name,
+
+            at.authority_id,
+            at.user_id as at_user_id,
+            at.role_id as at_role_id,
+
+            rt.role_id,
+            rt.role_name
+        from
+            user_tb ut
+            left outer join authority_tb at on(at.user_id = ut.user_id)
+            left outer join role_tb rt on(rt.role_id = at.role_id)
+        where
+            ut.email = #{email}
+    </select>
+
+    <select id="getUserCountByEmail"
+            parameterType="string"
+            resultType="integer">
+        select
+            count(*)
+        from
+            user_tb
+        where
+            email = #{email}
+    </select>
+
+    <insert id="saveUser" parameterType="com.korit.todo.entity.User">
+        insert into user_tb
+        values(0, #{email}, #{password}, #{name})
+    </insert>
+</mapper>

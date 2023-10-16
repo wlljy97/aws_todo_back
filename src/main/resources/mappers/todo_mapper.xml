@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.korit.todo.repository.TodoMapper">
+
+    <insert id="saveTodo" parameterType="com.korit.todo.entity.Todo">
+        insert into todo_tb
+        values (0, #{content}, #{email})
+    </insert>
+
+    <select id="getTodoListByEmail"
+            parameterType="string"
+            resultType="com.korit.todo.entity.Todo">
+
+        select
+            todo_id as todoId,
+            content,
+            email
+        from
+            todo_tb
+        where
+            email = #{email}
+
+    </select>
+
+    <delete id="deleteTodo" parameterType="integer">
+        delete
+        from
+            todo_tb
+        where
+            todo_id = #{todoId}
+    </delete>
+
+    <update id="updateTodo" parameterType="com.korit.todo.entity.Todo">
+        update todo_tb
+        set
+            content = #{content}
+        where
+            todo_id = #{todoId}
+    </update>
+</mapper>
